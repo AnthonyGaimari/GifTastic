@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Giphy</title>
+</head>
+
+<body>
+
+    <div id="buttons"></div>
+
+    <div id="gifs-appear-here">
+    </div>
+    <script type="text/javascript">
+    var topics = [ "Chicago Cubs","Chicago White Sox","Cleveland Indians","Detriot Tigers","New York Yankees",]
+        for (var i = 0; i < topics.length; i++) {
+                        var button = $("<button>").text(topics[i])
+                        $("#buttons").append(button)
+                        };
+
+            $("button").on("click", function () {
+            console.log("this")
+            var team = $(this).text();
+            console.log(team)
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                team + "&api_key=LjgXdR6tcQ2gBuQ5qrKJN6HnKSBkFdaR&limit=10";
+
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                .then(function (response) {
+                    var results = response.data;
+                    console.log(response.data);
+                    for (var i = 0; i < results.length; i++) {
+                        var gifDiv = $("<div>");
+
+                        var rating = results[i].rating;
+
+                        var p = $("<p>").text("Rating: " + rating);
+
+                        var teamImage = $("<img>");
+                        teamImage.attr("src", results[i].images.fixed_height_still.url);
+                        teamImage.attr("data-state", "still" );
+                        teamImage.attr("data-animate", "#URL" );
+                        teamImage.attr("data-still", "#URL" );
+                        gifDiv.prepend(p);
+                        gifDiv.prepend(teamImage);
+
+                        $("#gifs-appear-here").prepend(gifDiv);
+                    }
+                });
+        });
+        
+        $("img").on("click", function () {
+            var state = $(this).attr(data - state);
+            console.log(state);
+
+
+
+            if (state == "still") {
+                var animateState = $(this).attr("data-animate")
+                $(this).attr("src", animateState);
+                $(this).attr("data-state", "animate");
+            }
+
+            if (state == "animate") {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+
+        });
+    </script>
+</body>
+
+</html>
