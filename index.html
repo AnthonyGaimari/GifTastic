@@ -7,22 +7,40 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <title>Giphy</title>
+    <style type="text/css">
+        button,
+        div,
+        form,
+        input {
+            margin: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
     <div id="buttons"></div>
+    <div style="float:right">
+        <form>
+            <span id="">Submit: <input id="add-team" type="text">
+                <input id="teams" value="Add a Team" type="submit"></span>
+        </form>
+
+    </div>
 
     <div id="gifs-appear-here">
     </div>
-    <script type="text/javascript">
-    var topics = [ "Chicago Cubs","Chicago White Sox","Cleveland Indians","Detriot Tigers","New York Yankees",]
-        for (var i = 0; i < topics.length; i++) {
-                        var button = $("<button>").text(topics[i])
-                        $("#buttons").append(button)
-                        };
 
-            $("button").on("click", function () {
+
+    <script type="text/javascript">
+        var topics = ["Chicago Cubs", "Chicago White Sox", "Cleveland Indians", "Detriot Tigers", "New York Yankees",]
+
+        for (var i = 0; i < topics.length; i++) {
+            var button = $("<button>").text(topics[i])
+            $("#buttons").append(button)
+        };
+
+        $(document).on("click", "button", function () {
             console.log("this")
             var team = $(this).text();
             console.log(team)
@@ -36,18 +54,17 @@
                 .then(function (response) {
                     var results = response.data;
                     console.log(response.data);
+
                     for (var i = 0; i < results.length; i++) {
                         var gifDiv = $("<div>");
-
                         var rating = results[i].rating;
-
                         var p = $("<p>").text("Rating: " + rating);
-
                         var teamImage = $("<img>");
                         teamImage.attr("src", results[i].images.fixed_height_still.url);
-                        teamImage.attr("data-state", "still" );
-                        teamImage.attr("data-animate", "#URL" );
-                        teamImage.attr("data-still", "#URL" );
+                        teamImage.attr("data-state", "still");
+                        teamImage.attr("data-animate", results[i].images.fixed_height.url);
+                        teamImage.attr("data-still", results[i].images.fixed_height_still.url);
+                        teamImage.attr("class", "img");
                         gifDiv.prepend(p);
                         gifDiv.prepend(teamImage);
 
@@ -55,26 +72,55 @@
                     }
                 });
         });
-        
-        $("img").on("click", function () {
-            var state = $(this).attr(data - state);
+        $(document.body).on("click", ".img", function () {
+            var state = $(this).attr("data-state");
             console.log(state);
-
-
 
             if (state == "still") {
                 var animateState = $(this).attr("data-animate")
                 $(this).attr("src", animateState);
                 $(this).attr("data-state", "animate");
+                console.log(animateState);
             }
 
-            if (state == "animate") {
+            else {
                 $(this).attr("src", $(this).attr("data-still"));
                 $(this).attr("data-state", "still");
             }
 
         });
+
+        function renderButtons() {
+            $("#buttons").empty();
+            console.log(topics);
+            for (var i = 0; i < topics.length; i++) {
+                var teams = $("<button>");
+                teams.addClass("teamInput");
+                teams.attr("data-name", topics[i]);
+                teams.text(topics[i]);
+                console.log(teams)
+                console.log(topics[i])
+                $("#buttons").append(teams);
+            }
+            console.log("working")
+        }
+
+        $("#teams").on("click", function (event) {
+            event.preventDefault();
+            console.log("NEW teams");
+            var newTeam = $("#add-team").val().trim();
+            console.log(newTeam);
+            topics.push(newTeam);
+            console.log(topics);
+
+            renderButtons();
+            $("#add-team").val('');
+        });
+
+      
+
+        // Calling the renderButtons function at least once to display the initial list of topics
+        renderButtons();
+
     </script>
 </body>
-
-</html>
